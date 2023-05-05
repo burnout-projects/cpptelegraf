@@ -1,10 +1,11 @@
+#include "utils.cpp"
 #include <cassert>
 #include <protocol.h>
-#include "utils.cpp"
 
-Line::Line(const std::string& measurement, const std::unordered_map<std::string, std::string>& values,
-           const std::unordered_map<std::string, std::string>& tags, const std::string& timestamp)
-{
+Line::Line(const std::string &measurement,
+           const std::unordered_map<std::string, std::string> &values,
+           const std::unordered_map<std::string, std::string> &tags,
+           const std::string &timestamp) {
   assert(!measurement.empty());
   assert(!values.empty());
 
@@ -14,25 +15,18 @@ Line::Line(const std::string& measurement, const std::unordered_map<std::string,
   timestamp_ = timestamp;
 }
 
-std::string Line::get_output_measurement() const
-{
+std::string Line::get_output_measurement() const {
   return format_string(measurement_);
 }
 
-std::string Line::get_output_values() const
-{
+std::string Line::get_output_values() const {
   std::stringstream ss;
-  if (values_.size() == 1)
-  {
-    const auto& it = values_.begin();
+  if (values_.size() == 1) {
+    const auto &it = values_.begin();
     ss << it->first << "=" << format_value(it->second);
-  }
-  else
-  {
-    for (auto it = values_.begin(); it != values_.end(); ++it)
-    {
-      if (it != values_.begin())
-      {
+  } else {
+    for (auto it = values_.begin(); it != values_.end(); ++it) {
+      if (it != values_.begin()) {
         ss << ",";
       }
       ss << it->first << "=" << format_value(it->second);
@@ -41,15 +35,11 @@ std::string Line::get_output_values() const
   return ss.str();
 }
 
-std::string Line::get_output_tags() const
-{
+std::string Line::get_output_tags() const {
   std::stringstream ss;
-  if (!tags_.empty())
-  {
-    for (auto it = tags_.begin(); it != tags_.end(); ++it)
-    {
-      if (it != tags_.begin())
-      {
+  if (!tags_.empty()) {
+    for (auto it = tags_.begin(); it != tags_.end(); ++it) {
+      if (it != tags_.begin()) {
         ss << ",";
       }
       ss << it->first << "=" << format_string(it->second);
@@ -58,21 +48,17 @@ std::string Line::get_output_tags() const
   return ss.str();
 }
 
-std::string Line::get_output_timestamp() const
-{
-  if (!timestamp_.empty())
-  {
+std::string Line::get_output_timestamp() const {
+  if (!timestamp_.empty()) {
     return " " + timestamp_;
-  }
-  else
-  {
+  } else {
     return "";
   }
 }
 
-std::string Line::to_line_protocol() const
-{
+std::string Line::to_line_protocol() const {
   std::stringstream ss;
-  ss << get_output_measurement() << "," << get_output_tags() << " " << get_output_values() << get_output_timestamp();
+  ss << get_output_measurement() << "," << get_output_tags() << " "
+     << get_output_values() << get_output_timestamp();
   return ss.str();
 }
