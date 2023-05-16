@@ -1,6 +1,6 @@
-// #include <gtest/gtest.h>
-// #include <unordered_map>
-// #include <protocol.h>
+#include <gtest/gtest.h>
+#include <unordered_map>
+#include <protocol.h>
 
 struct ProtocolTestFixture : testing::Test {
   std::string measurement_ = "system_stats";

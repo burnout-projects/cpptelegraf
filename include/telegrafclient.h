@@ -8,7 +8,7 @@ public:
 
   ~TelegrafClient();
 
-  void send(const std::string &data) override;
+  ssize_t send(const std::string &data) override;
 
 private:
   int socket_;

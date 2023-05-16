@@ -12,7 +12,7 @@ TelegrafClient::TelegrafClient(
 
 TelegrafClient::~TelegrafClient() { close(socket_); }
 
-void TelegrafClient::send(const std::string &data) {
+ssize_t TelegrafClient::send(const std::string &data) {
   try {
     const auto len = data.length();
     const auto *const buffer = data.c_str();
@@ -25,10 +25,14 @@ void TelegrafClient::send(const std::string &data) {
       // throw error
     }
 
-    sendto(socket_, buffer, len, 0,
+    ssize_t ret_bytes;
+    ret_bytes = sendto(socket_, buffer, len, 0,
            reinterpret_cast<const sockaddr *>(&server_address_),
            sizeof(server_address_));
-  } catch (...) {
+    return ret_bytes;
+  }
+  catch (...)
+  {
     // Socket errors should fail silently so they don't affect anything else
   }
 }

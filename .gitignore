@@ -13,3 +13,5 @@ _deps
 build
 .vscode
 *Config.cmake
+build
+_bin

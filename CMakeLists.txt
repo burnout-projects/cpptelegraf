@@ -8,7 +8,6 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 # Specify the include directory
 include_directories(include)
 
-
 enable_testing()
 add_subdirectory(test)
 

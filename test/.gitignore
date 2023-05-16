@@ -11,3 +11,5 @@ CTestTestfile.cmake
 _deps
 *.[oa]
 telegraf_tests
+build
+_bin
