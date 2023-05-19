@@ -1,73 +1,33 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 project(TelegrafLibrary VERSION 1.0.0 LANGUAGES CXX)
 
-# Set the option to build shared libraries
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_TESTS "Build unit tests" OFF)
 
-# Specify the include directory
-include_directories(include)
+if (BUILD_TESTS)
+    find_package(GTest REQUIRED)
+endif()
 
-enable_testing()
-add_subdirectory(test)
+set(__ipo_ok FALSE)
+if (POLICY CMP0069)
+    cmake_policy(SET CMP0069 NEW)
 
-# Define the library target
-add_library(TelegrafLibrary SHARED
-    src/protocol.cpp
-    src/clientbase.cpp
-    src/telegrafclient.cpp
-)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT __ipo_ok OUTPUT __ipo_err LANGUAGES CXX)
+    if (NOT __ipo_ok)
+        message(STATUS "IPA ${__ipo_err}")
+    endif()
+endif()
 
-# Set public header files
-set_target_properties(TelegrafLibrary PROPERTIES
-    PUBLIC_HEADER include/protocol.h # prop1 value1
-    PUBLIC_HEADER include/telegrafclient.h # prop2 value2
-)
+# This project is intended only for GNU/LLVM compilers.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 
-# Define include directories
-target_include_directories(TelegrafLibrary PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
+add_subdirectory(src)
 
-# Set compiler options
-target_compile_options(TelegrafLibrary PUBLIC -Wall -Wextra -pedantic)
-
-# Set linker options
-target_link_libraries(TelegrafLibrary PUBLIC
-
-    # Add any required third-party libraries here
-)
-
-# # Install rules
-# install(TARGETS TelegrafLibrary
-#     EXPORT TelegrafLibraryTargets
-#     LIBRARY DESTINATION lib
-#     ARCHIVE DESTINATION lib
-#     RUNTIME DESTINATION bin
-#     PUBLIC_HEADER DESTINATION include
-# )
-
-# # Install CMake package configuration files
-# install(EXPORT TelegrafLibraryTargets
-#     FILE TelegrafLibraryTargets.cmake
-#     NAMESPACE TelegrafLibrary::
-#     DESTINATION lib/cmake/TelegrafLibrary
-# )
-
-# set(TelegrafLibrary_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake" CACHE PATH "The path to the TelegrafLibraryConfig.cmake files")
-
-
-
-# # Generate CMake package configuration files
-# include(CMakePackageConfigHelpers)
-# configure_package_config_file(
-#     ${TelegrafLibrary_CMAKE_DIR}/TelegrafLibraryConfig.cmake.in
-#     ${CMAKE_CURRENT_BINARY_DIR}/TelegrafLibraryConfig.cmake
-#     INSTALL_DESTINATION lib/cmake/TelegrafLibrary
-# )
-
-# # Install CMake package configuration files
-# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/TelegrafLibraryConfig.cmake
-#     DESTINATION lib/cmake/TelegrafLibrary
-# )
+if (BUILD_TESTS AND GTEST_FOUND)
+    enable_testing()
+    add_subdirectory(test)
+endif()

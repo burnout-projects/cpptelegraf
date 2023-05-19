@@ -35,4 +35,5 @@ ssize_t TelegrafClient::send(const std::string &data) {
   {
     // Socket errors should fail silently so they don't affect anything else
   }
+  return -1;
 }
