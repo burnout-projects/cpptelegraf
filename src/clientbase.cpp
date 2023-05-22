@@ -5,14 +5,14 @@ ClientBase::ClientBase(const std::string &host, int port,
                        const std::unordered_map<std::string, std::string> &tags)
     : host_(host), port_(port), tags_(tags) {}
 
-void ClientBase::metric(
+ssize_t ClientBase::metric(
     const std::string &measurement_name,
     const std::unordered_map<std::string, std::string> &values,
     const std::unordered_map<std::string, std::string> &tags,
     const std::string &timestamp) {
   if (measurement_name.empty() || values.empty()) {
     // Don't try to send empty data
-    return;
+    return 0;
   }
 
   // Do a shallow merge of the metric tags and global tags
@@ -21,5 +21,5 @@ void ClientBase::metric(
 
   // Create a metric line from the input and then send it to socket
   Line line(measurement_name, values, all_tags, timestamp);
-  send(line.to_line_protocol());
+  return send(line.to_line_protocol());
 }

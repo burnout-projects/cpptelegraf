@@ -3,9 +3,12 @@
 #include <unordered_map>
 #include <telegrafclient.h> // includes clientbase.h
 
+using ::testing::Return;
+using ::testing::_;
+
 class MockTelegrafClient : public IClientBase {
 public:
-  MOCK_METHOD4(metric, void(const std::string &measurement_name,
+  MOCK_METHOD4(metric, ssize_t(const std::string &measurement_name,
                             const std::unordered_map<std::string, std::string> &values,
                             const std::unordered_map<std::string, std::string> &tags,
                             const std::string &timestamp));
@@ -15,23 +18,28 @@ public:
 struct TelegrafClientTestFixture : testing::Test {
   std::unordered_map<std::string, std::string> tags_{{"region", "us-west"},
                                                     {"app", "example"}};
-  TelegrafClient client_{"localhost", 8094, tags_};
-
   std::unordered_map<std::string, std::string> values_{{"temperature", "22.1"},
                                                       {"humidity", "45"}};
-
+  MockTelegrafClient client;
+  
   TelegrafClientTestFixture() {}
 
   ~TelegrafClientTestFixture() {}
 };
 
 TEST_F(TelegrafClientTestFixture, TestOne) {
-  client_.metric("weather", values_);
+  MockTelegrafClient client;
+  int expected = 78; // weather,app=example,region=us-west humidity="45",temperature="22.1" 1683219971
+  EXPECT_CALL(client, metric(_, _, _, _)).WillOnce(Return(expected));
+  ssize_t actual = client.metric("weather", values_, tags_, "1684263222");
+  ASSERT_EQ(expected, actual);
 }
 
 TEST(ClientTest, TestTwo) {
   MockTelegrafClient client;
   std::string testData = "testdata";
-  EXPECT_CALL(client, send(testData));
-  client.send(testData);
+  int expected = testData.length();
+  EXPECT_CALL(client, send(testData)).WillOnce(Return(expected));
+  ssize_t actual = client.send(testData);
+  ASSERT_EQ(expected, actual);
 }

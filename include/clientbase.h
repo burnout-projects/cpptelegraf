@@ -13,7 +13,7 @@ class IClientBase {
 public:
   virtual ~IClientBase() {}
 
-  virtual void metric(const std::string &measurement_name,
+  virtual ssize_t metric(const std::string &measurement_name,
                       const std::unordered_map<std::string, std::string> &values,
                       const std::unordered_map<std::string, std::string> &tags = {},
                       const std::string &timestamp = "") = 0;
@@ -27,7 +27,7 @@ public:
   ClientBase(const std::string &host = "localhost", int port = 8094,
              const std::unordered_map<std::string, std::string> &tags = {});
 
-  void metric(const std::string &measurement_name,
+  ssize_t metric(const std::string &measurement_name,
               const std::unordered_map<std::string, std::string> &values,
               const std::unordered_map<std::string, std::string> &tags = {},
               const std::string &timestamp = "");
@@ -39,24 +39,3 @@ protected:
   int port_;
   std::unordered_map<std::string, std::string> tags_;
 };
-
-
-
-// class ClientBase {
-// public:
-//   ClientBase(const std::string &host = "localhost", int port = 8094,
-//              const std::unordered_map<std::string, std::string> &tags = {});
-
-
-//   void metric(const std::string &measurement_name,
-//               const std::unordered_map<std::string, std::string> &values,
-//               const std::unordered_map<std::string, std::string> &tags = {},
-//               const std::string &timestamp = "");
-
-//   virtual void send(const std::string &data) = 0;
-
-// protected:
-//   std::string host_;
-//   int port_;
-//   std::unordered_map<std::string, std::string> tags_;
-// };

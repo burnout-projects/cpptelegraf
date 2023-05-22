@@ -25,7 +25,7 @@ ssize_t TelegrafClient::send(const std::string &data) {
       // throw error
     }
 
-    ssize_t ret_bytes;
+    ssize_t ret_bytes = 0;
     ret_bytes = sendto(socket_, buffer, len, 0,
            reinterpret_cast<const sockaddr *>(&server_address_),
            sizeof(server_address_));
@@ -35,4 +35,5 @@ ssize_t TelegrafClient::send(const std::string &data) {
   {
     // Socket errors should fail silently so they don't affect anything else
   }
+  return -1;
 }
