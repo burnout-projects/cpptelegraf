@@ -35,3 +35,7 @@ _target
 *.exe
 *.out
 *.app
+
+# Others
+.vscode
+CMakeFiles
